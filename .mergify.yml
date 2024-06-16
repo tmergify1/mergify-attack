@@ -1,0 +1,31 @@
+pull_request_rules:
+  - name: automatic merge
+    conditions:
+      - label=automerge
+      - check-success=test
+      - check-success=build
+    actions:
+      merge:
+        method: merge
+
+  - name: automatic queue for dependencies
+    conditions:
+      - label=queue-batch
+      - check-success=test
+    actions:
+      queue:
+        name: dependencies
+
+queue_rules:
+  - name: default
+    speculative_checks: 5
+    allow_inplace_checks: false
+    queue_conditions:
+      - check-success=test
+    merge_conditions:
+      - check-success=test-before-merge
+
+  - name: dependencies
+    conditions:
+      - check-success=test
+    batch_size: 5
